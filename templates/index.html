@@ -29,16 +29,20 @@
                                 按标签<span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-{#                                {% for t in tags %}#}
-{#                                <li><a href="#" id="t_{{ t['tid'] }}" onclick="filterTag(this);">{{ t['tag_name'] }}</a></li>#}
-{#                                {% end %}#}
+                                {% if tags %}
+                                    {% for t in tags %}
+                                        <li><a href="#" id="t_{{ t['tid'] }}" onclick="filterTag(this);">{{ t['tag_name'] }}</a></li>
+                                    {% end %}
+                                {% end %}
                             </ul>
                         </div>
                         <a style="margin-left: 12px;" id="refreshQ" href="#"><span class="glyphicon glyphicon-refresh"></span></a>
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 10px;" class="list-group" id="question-list"></div>
+            <div style="margin-top: 10px;" class="list-group" id="question-list">
+                <!-- 显示问题列表 -->
+            </div>
             <div class="row">
                 <div class="col-md-3">
                     <button style="float: left" id="preQuestions" class="btn btn-info">上一页</button>
