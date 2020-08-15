@@ -41,3 +41,10 @@ function refreshCurrentStatus() {
 function requestAnswerStatus() {
 
 }
+
+function getCookie(name) {
+    let arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)")
+    if (arr = document.cookie.match(reg))
+        return unescape(arr[2])
+    return null
+}

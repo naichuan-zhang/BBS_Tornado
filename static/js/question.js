@@ -24,7 +24,7 @@ function loadQuestionList(pre, last_qid) {
         success: function(data) {
             if (data.status === 200 && data.data) {
                 let list = data.data.question_list
-                if (data.length) {
+                if (list.length) {
                     let html = ""
                     for (let item in list) {
                         html += "<a style='text-align: left;' class='list-group-item' href='/question/detail/" + list[item].qid + "'>" +
@@ -70,10 +70,12 @@ function searchQuestion(input) {
 
 $('#newest').click(function () {
     loadQuestionListByFilter('newest')
+    console.log('newest')
 })
 
 $('#hotest').click(function () {
     loadQuestionListByFilter('hotest')
+    console.log('hotest')
 })
 
 $('#under').click(function () {
@@ -103,7 +105,7 @@ function loadQuestionListByFilter(name) {
             if (data.status === 200 && data.data) {
                 let list = data.data.question_list
                 let html = ""
-                for (let item in data) {
+                for (let item in list) {
                     html += "<a style='text-align: left;' class='list-group-item' href='/question/detail/" + list[item].qid + "'>" +
                             "<span>" + list[item].abstract + "</span>" +
                             "<span style='float: right; margin-right: 25px;' class='glyphicon glyphicon-pencil'>" + list[item].answer_count + "</span>" +

@@ -20,6 +20,15 @@ DATABASE = {
     }
 }
 
+REDIS = {
+    'default': {
+        'host': 'localhost',
+        'port': 6379,
+        'password': '',
+        'selected_db': 0,
+    }
+}
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
