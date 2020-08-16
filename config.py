@@ -9,6 +9,10 @@ SETTINGS = {
     'debug': True,
 }
 
+DOMAIN = 'http://localhost:9000/'
+
+DEFAULT_UPLOAD_PATH = os.path.join(os.path.dirname(__file__), 'pics')
+
 DATABASE = {
     'default': {
         'host': 'localhost',

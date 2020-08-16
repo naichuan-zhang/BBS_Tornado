@@ -1,6 +1,44 @@
+let editor = new Simditor({
+    textarea: $('#question-content'),
+    placeholder: '请输入18-10000字的详细描述...',
+    toolbarFloat: true,
+    toolbarFloatOffset: 0,
+    cleanPaste: true,
+    pasteImage: true,
+    toolbarHidden: false,
+    toolbar: [
+        'title',
+        'bold',
+        'italic',
+        'underline',
+        'strikethrough',
+        'fontScale',
+        'color',
+        'ol',
+        'ul',
+        'code',
+        'image',
+        'blockquote',
+        'table',
+        'link',
+        'hr',
+        'indent',
+        'outdent',
+        'alignment',
+    ],
+    upload: {
+        url: '/question/picload',
+        params: null,
+        fileKey: 'pic',
+        connectionCount: 3,
+        leaveConfirm: '正在上传文件...'
+    }
+})
+
 $('#submit-question').click(function () {
     let abstract = $('#question-abstract').val()
     let content = $('#question-content').val()
+    console.log(content)
     let tag_id = $('#question-tag').find('option:selected').attr('id')
     if (!abstract.match('^[\\s\\S]{7,40}$')) {
         $('#question-abstract').css('border', 'solid red')
@@ -13,7 +51,7 @@ $('#submit-question').click(function () {
         $('#absMessage').remove();
         $('#question-abstract').css('border', '');
     }
-    if(!content.match('^[\\s\\S]{18,10240}$')){
+    if(!content.match('^[\\s\\S]{1,102400}$')){
         $('#textareaForm').css('border', '1px solid red');
         $('#editorForm').prepend("<div id='absMessage' class='alert alert-danger'>问题描述不符合长度</div>");
         setTimeout(function () {

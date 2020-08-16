@@ -159,3 +159,18 @@ def create_question(tid, user, abstract, content):
         cursor.close()
         conn.close()
     raise gen.Return((data, last_insert.get('qid', None)))
+
+
+@gen.coroutine
+def delete_question_by_id(qid, user):
+    conn = yield async_connect()
+    cursor = conn.cursor()
+    sql = "delete from t_question where qid = %d and uid = (select uid from t_user where username = '%s')" % (qid, user)
+    try:
+        data = yield cursor.execute(sql)
+    except Exception as e:
+        data = 0
+    finally:
+        cursor.close()
+        conn.close()
+    raise gen.Return(data)

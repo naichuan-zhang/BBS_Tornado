@@ -81,14 +81,13 @@ function editorRefresh() {
 
 function loadAnswers() {
     let curUsername = getCookie('username')
-    $('#answer-list .list-group').html('')
+    $('#answer_list .list-group').html('')
     $.ajax({
         url: '/answer/list/' + getCurrentQid(),
         type: 'get',
         data: {},
         dataType: 'json',
         success: function (data) {
-            console.log(data)
             if (data.status === 200 && data.data) {
                 let answers = data.data.answer_list
                 if (answers.length) {
@@ -156,14 +155,74 @@ function loadAnswers() {
                             }
                         }
                     }
-                    $('#answer-list .list-group').append(html)
+                    $('#answer_list .list-group').append(html)
                 } else {
                     let html = "<div id='notAnswer' class='alert alert-danger'>暂无回答</div>"
-                    $('#answer-list .list-group').append(html)
+                    $('#answer_list .list-group').append(html)
                 }
             }
         }
     })
+}
+
+function questionChange() {
+    alert('暂时不能修改')
+    return false
+}
+
+function questionDelete(obj) {
+    $('#deleteModal').modal('show')
+    $('#confirmDelete').click(function () {
+        $.ajax({
+            url: '/question/delete/' + obj.id.substr(16, 21),
+            type: 'post',
+            data: {},
+            dataType: 'json',
+            success: function (data) {
+                if (data.status === 200) {
+                    window.location.href = '/'
+                } else {
+                    $('#answer_list').prepend("<div id='answer-list-message' class='alert alert-danger'>" + data.message + "</div>")
+                }
+            }
+        })
+    })
+    return false
+}
+
+function changeAnswer() {
+    alert('暂时不能修改')
+    return false
+}
+
+function deleteAnswer(aid) {
+    $('#deleteModal').modal('show')
+    $('#confirmDelete').click(function () {
+        $.ajax({
+            url: '/answer/delete/' + aid,
+            type: 'post',
+            data: {
+                qid: getCurrentQid(),
+            },
+            dataType: 'json',
+            success: function (data) {
+                $('#deleteModal').modal('hide')
+                if (data.status === 200) {
+                    $('#answer_list').prepend("<div id='answer-list-message' class='alert alert-success'>删除成功</div>")
+                    setTimeout(function () {
+                        $('#answer-list-message').remove()
+                    }, 1000)
+                } else if (data.message) {
+                    $('#answer_list').prepend("<div id='answer-list-message' class='alert alert-danger'>"+ res.message +"</div>");
+                   setTimeout(function () {
+                       $('#answer-list-message').remove();
+                   }, 1000)
+                }
+                location.reload()
+            }
+        })
+    })
+    return false
 }
 
 function getCurrentQid() {

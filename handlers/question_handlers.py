@@ -1,11 +1,17 @@
+import json
+import os
+import time
+import uuid
+
 from tornado import gen
 
+from config import DEFAULT_UPLOAD_PATH, DOMAIN
 from db.sql_utils.question import get_paged_questions, get_question_by_str, get_filtered_questions, check_user_has_read, \
-    get_question_by_qid, create_question
+    get_question_by_qid, create_question, delete_question_by_id
 from db.sql_utils.tag import get_all_tags
 from handlers.base_handlers import BaseHandler
 from utils.auth import login_required
-from utils.err_code import PARAMETER_ERR, CREATE_ERR
+from utils.err_code import PARAMETER_ERR, CREATE_ERR, DEL_ERR
 
 
 class QuestionListHandler(BaseHandler):
@@ -106,3 +112,55 @@ class QuestionCreateHandler(BaseHandler):
         self.json_response(200, 'ok', data={
             'qid': qid,
         })
+
+
+class QuestionUploadPicHandler(BaseHandler):
+    @gen.coroutine
+    @login_required
+    def get(self, *args, **kwargs):
+        self.json_response(200, 'ok', data={})
+
+    @gen.coroutine
+    @login_required
+    def post(self, *args, **kwargs):
+        pics = self.request.files.get('pic', None)
+        urls = []
+        if not pics:
+            self.json_response(*PARAMETER_ERR)
+            raise gen.Return()
+        folder_name = time.strftime('%Y%m%d', time.localtime())
+        folder = os.path.join(DEFAULT_UPLOAD_PATH, folder_name)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        for pic in pics:
+            filename = str(uuid.uuid4()) + pic['filename']
+            with open(os.path.join(folder, filename), 'wb+') as f:
+                f.write(pic['body'])
+            web_pic_path = 'pics/' + folder_name + '/' + filename
+            urls.append(os.path.join(DOMAIN, web_pic_path))
+        self.write(json.dumps({
+            'success': True,
+            'msg': 'ok',
+            'file_path': urls,
+        }))
+
+
+class QuestionDeleteHandler(BaseHandler):
+    @gen.coroutine
+    def get(self, *args, **kwargs):
+        pass
+
+    @gen.coroutine
+    @login_required
+    def post(self, qid, *args, **kwargs):
+        user = self.current_user
+        try:
+            qid = int(qid)
+        except Exception as e:
+            self.json_response(*PARAMETER_ERR)
+            raise gen.Return()
+        result = yield delete_question_by_id(qid, user)
+        if not result:
+            self.json_response(*DEL_ERR)
+            raise gen.Return()
+        self.json_response(200, 'ok', data={})

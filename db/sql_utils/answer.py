@@ -89,3 +89,30 @@ def adopt_answer(aid, qid):
         conn.close()
     raise gen.Return(data)
 
+
+@gen.coroutine
+def delete_answer_by_id(aid, qid, user):
+    conn = yield async_connect()
+    cursor = conn.cursor()
+    sql = "delete from t_answer where aid = %d and qid = %d " \
+          "and uid = (select uid from t_user where username = '%s')" % (aid, qid, user)
+    try:
+        data = yield cursor.execute(sql)
+    except Exception as e:
+        data = 0
+    raise gen.Return(data)
+
+
+@gen.coroutine
+def update_question_answer(qid):
+    conn = yield async_connect()
+    cursor = conn.cursor()
+    sql = "update t_question set answer_count = answer_count - 1 where qid = %d" % qid
+    try:
+        data = yield cursor.execute(sql)
+    except Exception as e:
+        data = 0
+    finally:
+        cursor.close()
+        conn.close()
+    raise gen.Return(data)
